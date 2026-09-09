@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ruang Kelas Virtual</title>
+  <style>
+    /* Reset & Dasar */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #e2d7c5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* Dinding Depan Kelas */
+    .classroom-wall {
+      width: 100%;
+      height: 85vh;
+      background: linear-gradient(180deg, #f4eee2 0%, #e6dac8 75%, #cbb193 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    /* POV Meja Siswa (Tampak Depan Bawah) */
+    .student-desk-pov {
+      width: 100%;
+      height: 15vh;
+      background: linear-gradient(180deg, #8b5a2b 0%, #5c3a17 100%);
+      border-top: 8px solid #a66d3b;
+      box-shadow: inset 0 10px 15px rgba(0,0,0,0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    /* Kontainer Utama Layout Depan Kelas */
+    .classroom-front {
+      display: flex;
+      justify-content: space-between;
+      align-items: stretch;
+      width: 95%;
+      max-width: 1200px;
+      gap: 20px;
+      z-index: 2;
+    }
+
+    /* ==========================================
+       1. RAK KIRI: TUGAS / LATIHAN (PAPER RACK)
+       ========================================== */
+    .paper-rack {
+      flex: 1;
+      background: #3e2723;
+      border: 4px solid #271510;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 6px 10px 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .rack-title {
+      color: #ffe0b2;
+      font-size: 1.05rem;
+      font-weight: bold;
+      text-align: center;
+      border-bottom: 2px dashed #8d6e63;
+      padding-bottom: 8px;
+      width: 100%;
+    }
+
+    .paper-item {
+      width: 100%;
+      background: #ffffff;
+      border-radius: 6px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #333;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.12);
+      transition: all 0.25s ease;
+      border-left: 5px solid #ff9800;
+    }
+
+    .paper-item:hover {
+      transform: translateX(6px) scale(1.02);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+      background: #fff8e1;
+    }
+
+    .paper-icon {
+      font-size: 1.6rem;
+    }
+
+    .paper-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .paper-text .title {
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: #2c3e50;
+    }
+
+    .paper-text .subtitle {
+      font-size: 0.75rem;
+      color: #7f8c8d;
+    }
+
+
+    /* ==========================================
+       2. PAPAN TULIS UTAMA (CENTER WHITEBOARD)
+       ========================================== */
+    .whiteboard {
+      flex: 2.5;
+      background: #ffffff;
+      border: 14px solid #5d4037; /* Frame kayu papan tulis */
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 420px;
+      background-image: linear-gradient(to bottom, #ffffff, #fafafa);
+    }
+
+    /* Waktu & Tanggal Pojok Atas Papan Tulis */
+    .whiteboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #eceff1;
+      padding-bottom: 12px;
+    }
+
+    .class-header-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .clock-widget {
+      background: #f0f4f8;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: #34495e;
+      font-weight: 600;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+      display: flex;
+      gap: 12px;
+    }
+
+    /* Body Link Tengah Papan Tulis (1-3 Link) */
+    .whiteboard-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+      margin: 20px 0;
+    }
+
+    .board-instruction {
+      text-align: center;
+      font-size: 0.95rem;
+      color: #607d8b;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .main-link-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #eef6ff;
+      border: 2px solid #3b82f6;
+      color: #1d4ed8;
+      padding: 12px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 0.98rem;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.06);
+    }
+
+    .main-link-btn:hover {
+      background: #3b82f6;
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(59, 130, 246, 0.35);
+    }
+
+    .whiteboard-footer {
+      text-align: center;
+      font-size: 0.82rem;
+      color: #95a5a6;
+      font-style: italic;
+    }
+
+
+    /* ==========================================
+       3. RAK KANAN: BUKU / MATERI DRIVE
+       ========================================== */
+    .bookshelf {
+      flex: 1;
+      background: #3e2723;
+      border: 4px solid #271510;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 6px 10px 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .shelf-title {
+      color: #ffe0b2;
+      font-size: 1.05rem;
+      font-weight: bold;
+      text-align: center;
+      border-bottom: 2px dashed #8d6e63;
+      padding-bottom: 8px;
+      width: 100%;
+    }
+
+    .book-item {
+      width: 100%;
+      color: white;
+      border-radius: 6px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      transition: all 0.25s ease;
+    }
+
+    /* Variasi Sampul Buku */
+    .book-item.blue { background: linear-gradient(135deg, #1e88e5, #1565c0); }
+    .book-item.green { background: linear-gradient(135deg, #43a047, #2e7d32); }
+    .book-item.purple { background: linear-gradient(135deg, #8e24aa, #6a1b9a); }
+
+    .book-item:hover {
+      transform: translateX(-6px) scale(1.02);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+      filter: brightness(1.1);
+    }
+
+    .book-icon {
+      font-size: 1.6rem;
+    }
+
+    .book-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .book-text .title {
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .book-text .subtitle {
+      font-size: 0.75rem;
+      opacity: 0.88;
+    }
+
+    /* Penyesuaian Responsif Layar Kecil / HP */
+    @media (max-width: 880px) {
+      .classroom-front {
+        flex-direction: column;
+      }
+      .classroom-wall {
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- DINDING RUANG KELAS -->
+  <div class="classroom-wall">
+    <div class="classroom-front">
+      
+      <!-- RAK KIRI: TUGAS & LATIHAN -->
+      <div class="paper-rack">
+        <div class="rack-title">📄 Tugas & Latihan</div>
+        
+        <!-- Kertas / Tugas 1 -->
+        <a href="https://wayground.com/join?gc=31444837&source=liveDashboard" target="_blank" class="paper-item">
+          <span class="paper-icon">📝</span>
+          <div class="paper-text">
+            <span class="title">Latihan #1</span>
+            <span class="subtitle">Google Forms / Lembar Kerja</span>
+          </div>
+        </a>
+
+        <!-- Kertas / Tugas 2 -->
+        <a href="https://forms.google.com" target="_blank" class="paper-item">
+          <span class="paper-icon">📋</span>
+          <div class="paper-text">
+            <span class="title">Kuis Singkat</span>
+            <span class="subtitle">Batas: Hari Ini 23.59 WIB</span>
+          </div>
+        </a>
+
+        <!-- Kertas / Tugas 3 -->
+        <a href="https://drive.google.com" target="_blank" class="paper-item">
+          <span class="paper-icon">📁</span>
+          <div class="paper-text">
+            <span class="title">Pengumpulan Projek</span>
+            <span class="subtitle">Upload File Ke Google Drive</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- PAPAN TULIS UTAMA (CENTER) -->
+      <div class="whiteboard">
+        <!-- Header Papan Tulis (Waktu & Tanggal) -->
+        <div class="whiteboard-header">
+          <div class="class-header-title">📌 Kelas Virtual Hari Ini</div>
+          <div class="clock-widget">
+            <span id="current-date">📅 -</span>
+            <span id="current-time">⏰ -</span>
+          </div>
+        </div>
+
+        <!-- Bagian Tengah Papan Tulis (1 - 3 Link Utama) -->
+        <div class="whiteboard-body">
+          <p class="board-instruction">Klik tautan di bawah ini untuk agenda pembelajaran hari ini:</p>
+
+          <!-- Link 1 -->
+          <a href="https://meet.google.com" target="_blank" class="main-link-btn">
+            <span>🎥 1. Ruang Tatap Muka (Google Meet / Zoom)</span>
+            <span>➔</span>
+          </a>
+
+          <!-- Link 2 -->
+          <a href="https://docs.google.com/presentation/d/1zCILGNw163Lq6NssCu0cPPIJKBj06yZC/edit?usp=drive_link&ouid=106606914285060717458&rtpof=true&sd=true" target="_blank" class="main-link-btn">
+            <span>📖 2. Modul Diskusi & Pembelajaran</span>
+            <span>➔</span>
+          </a>
+
+          <!-- Link 3 -->
+          <a href="https://youtube.com" target="_blank" class="main-link-btn">
+            <span>📺 3. Video Pembelajaran Interaktif</span>
+            <span>➔</span>
+          </a>
+        </div>
+
+        <!-- Footer Papan Tulis -->
+        <div class="whiteboard-footer">
+          Selamat belajar! Tetap fokus dan jangan lupa mencatat poin penting.
+        </div>
+      </div>
+
+      <!-- RAK KANAN: PERPUSTAKAAN BUKU / MATERI DRIVE -->
+      <div class="bookshelf">
+        <div class="shelf-title">📚 Materi & Referensi</div>
+        
+        <!-- Buku 1 -->
+        <a href="https://drive.google.com/file/d/1i7vf3m5K5bbJF6Se-c7KXgX2jI0Lhc0v/view?usp=drive_link" target="_blank" class="book-item blue">
+          <span class="book-icon">📘</span>
+          <div class="book-text">
+            <span class="title">Buku Paket Digital</span>
+            <span class="subtitle">Google Drive (PDF)</span>
+          </div>
+        </a>
+
+        <!-- Buku 2 -->
+        <a href="https://drive.google.com/file/d/1FBUT0pGsg4260_k6cELya_ynKiGKpBlL/view?usp=drive_link" target="_blank" class="book-item green">
+          <span class="book-icon">📗</span>
+          <div class="book-text">
+            <span class="title">Slide Presentasi</span>
+            <span class="subtitle">Google Slides Materi</span>
+          </div>
+        </a>
+
+        <!-- Buku 3 -->
+        <a href="https://drive.google.com/file/d/15iQxlH9aOWtc6YFeQBtVxoFZpXX7cODa/view?usp=drive_link" target="_blank" class="book-item purple">
+          <span class="book-icon">📙</span>
+          <div class="book-text">
+            <span class="title">Bank Soal & Modul</span>
+            <span class="subtitle">Arsip Google Drive</span>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- POV MEJA SISWA -->
+  <div class="student-desk-pov">
+    <span>📐 Sudut Pandang Siswa — Meja Belajar</span>
+  </div>
+
+  <!-- JAVASCRIPT: Jam & Tanggal Real-Time -->
+  <script>
+    function updateDateTime() {
+      const now = new Date();
+      
+      // Format Tanggal Bahasa Indonesia
+      const dateOptions = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+      const dateString = now.toLocaleDateString('id-ID', dateOptions);
+      
+      // Format Jam (HH:MM:SS)
+      const timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+      document.getElementById('current-date').textContent = '📅 ' + dateString;
+      document.getElementById('current-time').textContent = '⏰ ' + timeString;
+    }
+
+    // Update jam setiap 1 detik secara otomatis
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+  </script>
+</body>
+</html>
